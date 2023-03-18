@@ -32,7 +32,7 @@ public class BlueAutoLeft extends AutonBase{
     int point = 0;
 
     List<Pose2d> path = List.of(new Pose2d(new Translation2d(0,0), Rotation2d.fromDegrees(-90)),
-                                new Pose2d(new Translation2d(5.15,.3), Rotation2d.fromDegrees(0)), //4.82, .5
+                                new Pose2d(new Translation2d(5.15,.45), Rotation2d.fromDegrees(0)), //4.82, .5
                                 new Pose2d(new Translation2d(0,.5), Rotation2d.fromDegrees(-90)));
 
     Trajectory trajectory;
@@ -57,21 +57,22 @@ public class BlueAutoLeft extends AutonBase{
         switch(autoState){
             case firstPlace:
                 driving = false;
-                if(timer.get() < 3){
+                if(timer.get() > .05 && timer.get() < 3){
                     if(timer.get() < 2.5){
                         gripperSpeed = -.4;
                     }else{
                         gripperSpeed = .4;
                     }
-                    armPos = ArmPos.topNode;
+                    armPos = ArmPos.topNodeCone;
                 } else {
-                    gripperSpeed = 0;
+                    gripperSpeed = -.4;
                     armPos = ArmPos.packagePos;
                 }
+                if(timer.get() > 3) {
+                    gripperSpeed = 0;
 
-                if(timer.get() > 5){
                     trajectory = createTrajectory(path.get(point), path.get(point+1),
-                    Rotation2d.fromDegrees(40), Rotation2d.fromDegrees(-10));
+                    Rotation2d.fromDegrees(42.5), Rotation2d.fromDegrees(-12.5));
             
                     point++;
 
@@ -83,7 +84,7 @@ public class BlueAutoLeft extends AutonBase{
             case driveToObject1:
                 driving = true;
                 armPos = ArmPos.intake;
-                if(timer.get() > 1.5){
+                if(timer.get() > 1){
                     intakeOn = true;
                 }
                 
@@ -100,9 +101,10 @@ public class BlueAutoLeft extends AutonBase{
                 driving = false;
                 intakeOn = false;
                 armPos = ArmPos.intake;
-                if(timer.get() > 1){
+                gripperSpeed = -.4;
+                if(timer.get() > .25){
                     trajectory = createTrajectory(path.get(point), path.get(point+1), 
-                    Rotation2d.fromDegrees(-8 + 180), Rotation2d.fromDegrees(8 + 180));
+                    Rotation2d.fromDegrees(-9 + 180), Rotation2d.fromDegrees(9 + 180));
 
                     point++;
 
@@ -115,7 +117,9 @@ public class BlueAutoLeft extends AutonBase{
                 driving = true;
                 intakeOn = false;
 
-                armPos = ArmPos.packagePos;
+                if(timer.get()>.75){
+                    armPos = ArmPos.packagePos;
+                }
                 gripperSpeed = -.4;
                 
                 desState = trajectory.sample(timer.get());
@@ -137,7 +141,7 @@ public class BlueAutoLeft extends AutonBase{
                     }else{
                         gripperSpeed = .2;
                     }
-                    armPos = ArmPos.topNode;
+                    armPos = ArmPos.topNodeCone;
                 } else {
                     gripperSpeed = 0;
                     armPos = ArmPos.packagePos;

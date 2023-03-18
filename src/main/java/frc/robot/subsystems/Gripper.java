@@ -10,7 +10,7 @@ import frc.robot.subsystems.Arm.ArmPos;
 
 public class Gripper {
     VictorSPX gripper;
-    private Arm arm = new Arm();
+    // private Arm arm = new Arm();
     private ArmPos armPositionPrev;
     int timer;
     
@@ -38,7 +38,7 @@ public class Gripper {
 
         if ((commander.getArmPosition() != ArmPos.Zero || commander.getArmPosition() != ArmPos.manual) && 
             (timer < 150) && (timer > 0)){
-            gripper.set(ControlMode.PercentOutput, -.6);
+            gripper.set(ControlMode.PercentOutput, -.8);
         }
         else{
         gripper.set(ControlMode.PercentOutput, commander.getGripperCommand());

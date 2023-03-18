@@ -13,12 +13,15 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 
-public class RedAutoRight1Bal extends AutonBase{
+public class BlueAutoMid1Bal extends AutonBase{
     enum AutoState {
         firstPlace,
         driveToStation,
+        mobility,
         balance,
         end
     }
@@ -26,26 +29,30 @@ public class RedAutoRight1Bal extends AutonBase{
     public AutoState autoState;
 
     public Timer timer = new Timer();
+    public Timer totalTime = new Timer();
 
     int point = 0;
 
-    List<Pose2d> path = List.of(new Pose2d(new Translation2d(0,0), Rotation2d.fromDegrees(90)), //4.82, .5
-                                new Pose2d(new Translation2d(.3,.75), Rotation2d.fromDegrees(90)));
+    Pose2d startingPose = new Pose2d(0,0, Rotation2d.fromDegrees(-90));
+    Pose2d endPose = new Pose2d(4.25,0, Rotation2d.fromDegrees(-90));
 
     Trajectory trajectory;
 
-    public RedAutoRight1Bal(){
+    public BlueAutoMid1Bal(){
         reset();
     }
 
     public void reset(){
         desState = new State();
-        targetTheta = Rotation2d.fromDegrees(90);
+        targetTheta = Rotation2d.fromDegrees(-90);
 
         point = 0;
         
         timer.reset();
         timer.start();
+
+        totalTime.reset();
+        totalTime.start();
 
         autoState = AutoState.firstPlace;
     }
@@ -66,23 +73,25 @@ public class RedAutoRight1Bal extends AutonBase{
                     armPos = ArmPos.packagePos;
                 }
 
-                if(timer.get() > 5){
-                    trajectory = createTrajectory(path.get(point), path.get(point+1));
-            
-                    point++;
+                if(timer.get() > 4){
+                    double headingAngle = Math.toDegrees(Math.atan2(endPose.getY()-startingPose.getY(), 
+                                             endPose.getX()-startingPose.getX()));
+
+                    trajectory = TrajectoryGenerator.generateTrajectory(
+                        new Pose2d(startingPose.getTranslation(), Rotation2d.fromDegrees(headingAngle)),
+                        List.of(),
+                        new Pose2d(endPose.getTranslation(), Rotation2d.fromDegrees(headingAngle)),
+                        new TrajectoryConfig(1, 1).setKinematics(Drivetrain.kinematics));
 
                     timer.reset();
 
-                    autoState = AutoState.driveToStation;
+                    autoState = AutoState.mobility;
                 }
             break;
-            case driveToStation:
+            case mobility:
                 driving = true;
-                armPos = ArmPos.packagePos;
-                intakeOn = false;
-                
                 desState = trajectory.sample(timer.get());
-                targetTheta = path.get(point).getRotation();
+                targetTheta = endPose.getRotation();
 
                 if(timer.get() > trajectory.getTotalTimeSeconds()){
                     timer.reset();
@@ -93,6 +102,15 @@ public class RedAutoRight1Bal extends AutonBase{
             case balance:
                 driving = false;
                 autoBalance = true;
+                if(totalTime.get() > 14){
+                    autoState = AutoState.end;
+                }
+
+            break;
+            case end:
+                driving = false;
+                autoBalance = false;
+                xMode = true;
             break;
         }
     }

@@ -15,6 +15,9 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.RobotCommander;
+import frc.robot.TeleopCommander;
+import frc.robot.subsystems.Arm.ArmPos;
 
 public class Shoulder {
 
@@ -102,7 +105,14 @@ public class Shoulder {
         SmartDashboard.putNumber("Shoulder Total Command", shoulder.getMotorOutputPercent());
     }
 
-    public void goToPostion(double degrees) {
+    public void goToPostion(RobotCommander commander, double degrees) {
+        if(commander.getArmPosition() == ArmPos.humanPlayerReady || 
+        commander.getArmPosition() == ArmPos.humanPlayerPickup){
+            shoulder.configMotionAcceleration(6000 * 16, Constants.ARM_TIMEOUT);
+        } else {
+            shoulder.configMotionAcceleration(Constants.SHOULDER_ACCEL, Constants.ARM_TIMEOUT);
+        }
+
         if (Math.abs(degrees) < 115) {
             shoulder.set(ControlMode.MotionMagic, this.convertToTicks(degrees), DemandType.ArbitraryFeedForward, 0.0*Math.cos(Math.toRadians(shoulderAngle)));
         } else {

@@ -192,6 +192,14 @@ public class Drivetrain{
         poseEstimator.resetPosition(Rotation2d.fromDegrees(angle), positions, new Pose2d(0,0, Rotation2d.fromDegrees(angle)));
     }
 
+    public void zero(){
+        frontLeftModule.zeroMotorPos();
+        frontRightModule.zeroMotorPos();
+        backLeftModule.zeroMotorPos();
+        backRightModule.zeroMotorPos();
+    }
+
+
 
     public static void zeroPositions(){
         frontLeftDrive.setSelectedSensorPosition(0);
@@ -249,8 +257,8 @@ public class Drivetrain{
 
     public void teleAction(TeleopCommander commander){
         if(commander.getAutoBalance()){
-            if(commander.allaince == Alliance.Red){
-                if(Pigeon.getRoll() < 15 && !rampPassed){
+            if(commander.allaince == Alliance.Blue){
+                if(Pigeon.getRoll() < 14 && !rampPassed){
                     chassisSpeeds = new ChassisSpeeds(
                         0,
                         -1,
@@ -262,7 +270,7 @@ public class Drivetrain{
                 }
 
                 if(rampPassed){
-                    if(Pigeon.getRoll() > 12){
+                    if(Pigeon.getRoll() > 8){
                         chassisSpeeds = new ChassisSpeeds(
                             0,
                             -Pigeon.getRoll() * .05,
@@ -331,8 +339,8 @@ public class Drivetrain{
             driveToPos(autonCommader.getDesiredState(), autonCommader.getTargetTheta());
             rampPassed = false;
         } else if(autonCommader.getAutoBalance()){
-            if(autonCommader.allaince == Alliance.Red){
-                if(Pigeon.getRoll() < 15 && !rampPassed){
+            if(autonCommader.allaince == Alliance.Blue){
+                if(Pigeon.getRoll() < 14 && !rampPassed){
                     chassisSpeeds = new ChassisSpeeds(
                         0,
                         -1,
@@ -344,14 +352,12 @@ public class Drivetrain{
                 }
 
                 if(rampPassed){
-                    if(Pigeon.getRoll() > 12){
+                    if(Pigeon.getRoll() > 11.5){
                         chassisSpeeds = new ChassisSpeeds(
                             0,
                             -Pigeon.getRoll() * .05,
                             0
                         );
-                    } else if(Pigeon.getRoll() < 6){
-                        setModulePositions();
                     } else {
                         chassisSpeeds = new ChassisSpeeds(
                             0,
@@ -359,10 +365,9 @@ public class Drivetrain{
                             0
                         );
                     }
-
                 }
             } else {
-                if(Pigeon.getRoll() > -21 && !rampPassed){
+                if(Pigeon.getRoll() > -15 && !rampPassed){
                     chassisSpeeds = new ChassisSpeeds(
                         0,
                         1,
@@ -374,14 +379,12 @@ public class Drivetrain{
                 }
     
                 if(rampPassed){
-                    if(Pigeon.getRoll() < -14){
+                    if(Pigeon.getRoll() < -13){
                         chassisSpeeds = new ChassisSpeeds(
                             0,
                             Pigeon.getRoll() * .05,
                             0
                         );
-                    } else if(Pigeon.getRoll() < -6){
-                        setModulePositions();
                     } else {
                         chassisSpeeds = new ChassisSpeeds(
                             0,
@@ -393,7 +396,9 @@ public class Drivetrain{
                 }
             }
             setSwerveModuleStates(chassisSpeeds);
-        } else {
+        } else if (autonCommader.getXMode()){
+            setModulePositions();
+        }else {
             setSwerveModuleStates(new ChassisSpeeds(0,0,0));
         }
 

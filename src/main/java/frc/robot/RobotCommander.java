@@ -21,7 +21,7 @@ public abstract class RobotCommander {
     public abstract double armShoulder();
     public abstract double armExtension();
     public abstract Arm.ArmPos getArmPosition();
-    public abstract double[] getIntakePosition();
+    public abstract Arm.IntakePos getIntakePosition();
     public abstract boolean getPickUpObject();
     public abstract boolean getArmReset();
     public abstract double armElbow();

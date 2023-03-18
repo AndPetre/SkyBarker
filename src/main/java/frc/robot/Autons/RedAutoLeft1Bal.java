@@ -27,6 +27,8 @@ public class RedAutoLeft1Bal extends AutonBase{
 
     public Timer timer = new Timer();
 
+    public Timer totalTime = new Timer();
+
     int point = 0;
 
     List<Pose2d> path = List.of(new Pose2d(new Translation2d(0,0), Rotation2d.fromDegrees(90)), //4.82, .5
@@ -47,6 +49,9 @@ public class RedAutoLeft1Bal extends AutonBase{
         timer.reset();
         timer.start();
 
+        totalTime.reset();
+        totalTime.start();
+
         autoState = AutoState.firstPlace;
     }
 
@@ -60,7 +65,7 @@ public class RedAutoLeft1Bal extends AutonBase{
                     }else{
                         gripperSpeed = .4;
                     }
-                    armPos = ArmPos.topNode;
+                    armPos = ArmPos.topNodeCone;
                 } else {
                     gripperSpeed = 0;
                     armPos = ArmPos.packagePos;
@@ -93,6 +98,14 @@ public class RedAutoLeft1Bal extends AutonBase{
             case balance:
                 driving = false;
                 autoBalance = true;
+                if(totalTime.get() > 14){
+                    autoState = AutoState.end;
+                }
+            break;
+            case end:
+                driving = false;
+                autoBalance = false;
+                xMode = true;
             break;
         }
     }

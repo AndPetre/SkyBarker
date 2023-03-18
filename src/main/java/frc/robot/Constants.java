@@ -12,13 +12,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 // Swerve Bot Constants
 public final class Constants {
     public static final boolean realBot = true;
-    public static final boolean compBot = true;
+    public static final boolean compBot = false;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.57785;
 
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.52705;
 
-    public static final double MAX_VOLTAGE = 12.0;
+    public static final double MAX_VOLTAGE = 12.0; 
 
     public static final double MAX_VELOCITY_METERS_PER_SECOND =
         6380.0 / 60.0 *
@@ -48,7 +48,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 7;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 8;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 21;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = compBot ? -Math.toRadians(340.87 - 180) : -Math.toRadians(55.72265625+180); //237.48046875
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = compBot ? -Math.toRadians(88.41796875+90) : -Math.toRadians(55.72265625+180); //237.48046875 //340.87 - 180
 
     public static final double SLOW_SPEED_MULTIPLIER = .5;
 
@@ -57,12 +57,12 @@ public final class Constants {
     public static final int INTAKE_ANGLE_MOTOR_ID = 10;
     public static final double INTAKE_PACKAGE_POSITION = 90.5;
     public static final double INTAKE_STATION_POSITION = 121;
-    public static final double INTAKE_COLLECT_POSITION = 169;
-    public static final double INTAKE_SPEED_CUBE = .55;
+    public static final double INTAKE_COLLECT_POSITION = 168; //169
+    public static final double INTAKE_SPEED_CUBE = .5;
     public static final double INTAKE_SPEED_CONE = 1;
     public static final int INTAKE_TIMEOUT = 200;
 
-    public static final double INTAKE_OFFSET = compBot ? 248.818 : 127.265625;
+    public static final double INTAKE_OFFSET = compBot ? 248.818 : 52.5;
     
     // Hopper CAN ID
     public static final int HOPPER_MOTOR = 11;
@@ -108,7 +108,7 @@ public final class Constants {
 
     //Arm motion magic parameters
     public static final double SHOULDER_CRUISEVELOCITY = 16000 * 16;
-    public static final double SHOULDER_ACCEL = 6000 * 16;
+    public static final double SHOULDER_ACCEL = 6000 * 6; // 16 // new 6
 
     public static final double EXTENSION_CRUISEVELOCITY = 16000 * 10;
     public static final double EXTENSION_ACCEL = 6000 * 10;
@@ -123,7 +123,6 @@ public final class Constants {
     public static final int EXTENSION_PID_SLOT = 0;
     public static final int EXTENSION_K_PID_LOOP_IDX = 0;
 
-
     public static final int ELBOW_PID_SLOT = 0;
     public static final int ELBOW_K_PID_LOOP_IDX = 0;
 
@@ -132,8 +131,8 @@ public final class Constants {
     // public static final double SHOULDER_DEGREES_TO_TICKS = -FALCON500_TICKS_PER_REV * 1.3786;
     // public static final double ELBOW_DEGREES_TO_TICKS = BAG_TICKS_PER_REV * 1;
 
-    //Arm motion magic set positions  
-    public static final int ARM_BUMP_LATCH_TIME = 17;  // counts .02 seconds per tik
+    //Arm motion magic set positions
+    public static final int ARM_BUMP_LATCH_TIME = 17;
 
     public static final int ARM_TIMEOUT = 200;
 

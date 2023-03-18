@@ -15,9 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 
-// Big edit
-
-
 public class RedAutoLeft extends AutonBase{
     enum AutoState {
         firstPlace,
@@ -25,8 +22,6 @@ public class RedAutoLeft extends AutonBase{
         pause,
         driveToObject2,
         score2,
-        driveToBalance,
-        balance,
         end
     }
 
@@ -63,20 +58,23 @@ public class RedAutoLeft extends AutonBase{
         switch(autoState){
             case firstPlace:
                 driving = false;
-                if(timer.get() < 2.5){
-                    if(timer.get() < 2.25){
+                if(timer.get() > .05 && timer.get() < 3){
+                    if(timer.get() < 2.5){
                         gripperSpeed = -.4;
                     }else{
                         gripperSpeed = .4;
                     }
-                    armPos = ArmPos.topNode;
+                    armPos = ArmPos.topNodeCone;
                 } else {
+                    gripperSpeed = -.4;
+                    armPos = ArmPos.packagePos;
+                }
+                if(timer.get() > 3) {
                     gripperSpeed = 0;
-                    armPos = ArmPos.intake;
 
                     trajectory = createTrajectory(path.get(point), path.get(point+1),
-                    Rotation2d.fromDegrees(40), Rotation2d.fromDegrees(-10));
-            
+                    Rotation2d.fromDegrees(42.5), Rotation2d.fromDegrees(-12.5));
+
                     point++;
 
                     timer.reset();
@@ -87,7 +85,7 @@ public class RedAutoLeft extends AutonBase{
             case driveToObject1:
                 driving = true;
                 armPos = ArmPos.intake;
-                if(timer.get() > 1.5){
+                if(timer.get() > 1){
                     intakeOn = true;
                 }
                 
@@ -104,11 +102,10 @@ public class RedAutoLeft extends AutonBase{
                 driving = false;
                 intakeOn = false;
                 armPos = ArmPos.intake;
-                if(timer.get() > .5){
+                gripperSpeed = -.4;
+                if(timer.get() > .25){
                     trajectory = createTrajectory(path.get(point), path.get(point+1), 
-                    Rotation2d.fromDegrees(-10+180), Rotation2d.fromDegrees(10+180));
-
-                    overrideNegSide = true;
+                    Rotation2d.fromDegrees(-9 + 180), Rotation2d.fromDegrees(9 + 180));
 
                     point++;
 
@@ -121,12 +118,9 @@ public class RedAutoLeft extends AutonBase{
                 driving = true;
                 intakeOn = false;
 
-                if(timer.get() < .5){
+                if(timer.get()>.5){
                     armPos = ArmPos.packagePos;
-                } else {
-                    armPos = ArmPos.topNode;
                 }
-
                 gripperSpeed = -.4;
                 
                 desState = trajectory.sample(timer.get());
@@ -142,16 +136,20 @@ public class RedAutoLeft extends AutonBase{
             break;
             case score2:
                 driving = false;
-                if(timer.get() < 1){
-                    gripperSpeed = .2;
+                if(timer.get() < 3.5){
+                    if(timer.get() < 2.5){
+                        gripperSpeed = -.4;
+                    }else{
+                        gripperSpeed = .2;
+                    }
+                    armPos = ArmPos.topNodeCone;
                 } else {
+                    gripperSpeed = 0;
                     armPos = ArmPos.packagePos;
                 }
             case end:
                 driving = false;
-                autoBalance = false;
             break;
         }
-        SmartDashboard.putString("Auton State", autoState.toString());
     }
 }
