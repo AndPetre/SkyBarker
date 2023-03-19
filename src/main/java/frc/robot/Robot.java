@@ -38,7 +38,7 @@ import frc.robot.sensors.Camera;
 import frc.robot.sensors.Pigeon;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Gripper;
+//import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Hopper;
 // import frc.robot.subsystems.Intake;
 
@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
     private Camera camera;
     private AutonCommader autonCommader;
     private BlueAutoRight blueAutoRight;
-    private Gripper gripper;
+   // private Gripper gripper;
     private BlueAutoLeft blueAutoLeft;
     private OhCrap ohCrap;
     private RedAutoRight redAutoRight;
@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
         drivetrain = new Drivetrain();
         autonCommader = new AutonCommader();
         arm = new Arm();
-        gripper = new Gripper(Constants.GRIPPER);
+        //gripper = new Gripper(Constants.GRIPPER);
         hopper = new Hopper();
         blueAutoRight = new BlueAutoRight();
         blueAutoLeft = new BlueAutoLeft();
@@ -229,7 +229,7 @@ public class Robot extends TimedRobot {
         drivetrain.autonAction(autonCommader);
         arm.action(autonCommader);
         // hopper.HopperPeriodic(autonCommader);
-        gripper.action(autonCommader);
+        //gripper.action(autonCommader);
     }
 
     @Override
@@ -244,6 +244,7 @@ public class Robot extends TimedRobot {
 
         arm.brakeMode();
         arm.initilizeOffsets();
+        arm.initializeStateH();
     }
 
     @Override
@@ -253,7 +254,7 @@ public class Robot extends TimedRobot {
         drivetrain.teleAction(teleopCommander);
         arm.action(teleopCommander);
         arm.brakeMode();
-        gripper.action(teleopCommander);
+        //gripper.action(teleopCommander);
         // hopper.HopperPeriodic(teleopCommander);
     }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -21,9 +22,79 @@ import org.hotutilites.hotlogger.HotLogger;
 
 public class Arm {
 
+    int handoffTimer;
+
+    VictorSPX gripper;
+    // private Arm arm = new Arm();
+    private ArmPos armPositionPrev;
+    int timer;
+
+    int stateH;
+    
+
+
+    public void Gripper(int CANID) {
+        gripper = new VictorSPX(CANID);
+
+        gripper.setNeutralMode(NeutralMode.Brake);
+
+        gripper.setInverted(true);
+    }
+    
+
+    public void actionGrip(RobotCommander commander) {
+
+        if (commander.getArmPosition() != ArmPos.humanPlayerPickup && armPositionPrev == ArmPos.humanPlayerPickup) {
+            // start timer
+            timer = 150;
+
+        } else if ((commander.getArmPosition() != ArmPos.Zero || commander.getArmPosition() != ArmPos.manual)) {
+            // Increment timer
+            timer--;
+        } 
+
+        if ((commander.getArmPosition() != ArmPos.Zero || commander.getArmPosition() != ArmPos.manual) && 
+            (timer < 150) && (timer > 0)){
+            gripper.set(ControlMode.PercentOutput, -.8);
+        }
+        else{
+        gripper.set(ControlMode.PercentOutput, commander.getGripperCommand());
+        SmartDashboard.putNumber("Gripper Command", commander.getGripperCommand());
+        }
+        armPositionPrev = commander.getArmPosition();
+        SmartDashboard.putNumber("timer", timer);
+    }
+
+
     private Intake intake = new Intake(); 
 
     double desiredIntakePos;
+
+        public enum HandoffReached{
+        handoffPositionReached,
+        handoffPositionNotReached,
+        none
+    }
+
+    public HandoffReached returnHandoffReached(){
+        return HandoffReached.handoffPositionReached;
+    } 
+    public HandoffReached returnHandoffNotReached(){
+        return HandoffReached.handoffPositionNotReached;
+    }
+
+    public HandoffReached checkHandoffReached(){
+        if(this.returnHandoffReached() == HandoffReached.handoffPositionReached){
+            return HandoffReached.handoffPositionReached;
+        }
+        else{
+            return HandoffReached.handoffPositionNotReached;
+        }
+    }
+
+    public static enum Gripper{
+
+    }
 
     public static enum ArmPos {
 
@@ -93,6 +164,7 @@ public class Arm {
         pack(Constants.INTAKE_PACKAGE_POSITION , Constants.INTAKE_SPEED_CUBE/2,0),
         collect(Constants.INTAKE_COLLECT_POSITION, Constants.INTAKE_SPEED_CUBE/2,0),
         armMoving(102, 0,0),
+        back(91,-0.8,-0.8),
         handoff(91,0,0),
         handoffIntermediate(120,0,0),
         manual(0,0,0),
@@ -212,6 +284,12 @@ public class Arm {
         shoulder.intilizeOffset();
         elbow.intilizeOffset();
         currentCommandedZone = ArmZone.hopper;
+       this.Gripper(Constants.GRIPPER);
+    }
+
+    public void initializeStateH(){
+        stateH = 1;
+        handoffTimer = 0;
     }
     
     public void armPercentOutZero(){
@@ -305,6 +383,8 @@ public class Arm {
     public void action(RobotCommander commander) {
 
         if(commander.getArmPosition() == ArmPos.intakeConeGrab){
+
+            if(stateH == 1){
             
 
             if(determineZoneHandoff() == ArmZoneHandoff.armDownNotCenterIntakeDown){
@@ -415,9 +495,27 @@ public class Arm {
                 shoulder.goToPostion(commander, 0);
                 elbow.goToPostion(0);
                 intake.IntakePeriodic (this.returnIntakePos(91));
+                stateH = 2;
                 
             }
+        }
+
+        else{
+
+            if(handoffTimer<100){
+                extension.goToPostion(17);
+                shoulder.goToPostion(commander, 0);
+                elbow.goToPostion(0);
+                intake.IntakePeriodic (IntakePos.back);
+                gripper.set(ControlMode.PercentOutput, -.8);
+                handoffTimer++;
+            }
+            else{
+                handoffTimer = 0;
+                stateH = 1;
+            }
             
+        }
             
 
         }
@@ -427,6 +525,8 @@ public class Arm {
 
         intake.IntakePeriodic (commander.getIntakePosition());
         SmartDashboard.putString("Desired Intake Position", commander.getIntakePosition().toString());
+
+        this.actionGrip(commander);
 
         if(Math.abs(elbow.getElbowAngle()) < 10){
             useNegativeSide = commander.useNegativeSide();
