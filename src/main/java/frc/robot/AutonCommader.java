@@ -134,10 +134,6 @@ public class AutonCommader extends RobotCommander{
     //     return false;
     // }
 
-    public ArmBumpDirection getArmBumpDirection() {
-        return ArmBumpDirection.bumpZero;
-    }
-
     @Override
     public boolean useNegativeSide() {
         double angle =MathUtil.inputModulus(Pigeon.getAngle(),-180,180);
@@ -175,5 +171,11 @@ public class AutonCommader extends RobotCommander{
     public IntakePos getIntakePosition() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public ArmBumpDirection getArmBumpDirection() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getArmBumpDirection'");
     }
 }

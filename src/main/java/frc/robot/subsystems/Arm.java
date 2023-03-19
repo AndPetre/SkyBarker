@@ -737,6 +737,8 @@ public class Arm {
         return shoulderBumpOffSet * humanPlayerModifier * negativeModifier;
     }
 
+
+
     public void updatePose(){
         extension.updatePose();
         elbow.updatePose();

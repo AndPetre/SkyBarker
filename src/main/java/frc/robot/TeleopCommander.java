@@ -8,7 +8,6 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Arm.ArmPos;
 import frc.robot.subsystems.Arm.IntakePos;
-
 import frc.robot.subsystems.Arm.ArmPos.ArmBumpDirection;
 
 import static frc.robot.Constants.*;

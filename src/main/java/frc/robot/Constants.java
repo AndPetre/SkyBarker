@@ -12,7 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 // Swerve Bot Constants
 public final class Constants {
     public static final boolean realBot = true;
-    public static final boolean compBot = true;
+    public static final boolean compBot = false;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.57785;
 

@@ -27,7 +27,6 @@ public class Intake {
     CANCoder angleEncoder;
     PIDController pidController;
     private IntakePos determineIntakePosReading = IntakePos.none;
-
     public static double angleEncoderAngle;
 
     public static double startPosition;
